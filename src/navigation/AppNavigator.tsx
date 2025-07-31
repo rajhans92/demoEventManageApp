@@ -1,6 +1,6 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import EventsScreen from "../screens/EventsScreen";
+import EventNavigator from "./EventNavigator";
 import PackagesScreen from "../screens/PackagesScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -11,7 +11,7 @@ export default function AppNavigator({ onLogout }: { onLogout: () => void }) {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerShown: true,
+        headerShown: false,
         tabBarActiveTintColor: "#4CAF50",   // green theme
         tabBarInactiveTintColor: "gray",
         tabBarStyle: {
@@ -34,9 +34,9 @@ export default function AppNavigator({ onLogout }: { onLogout: () => void }) {
         },
       })}
     >
-      <Tab.Screen name="Events" component={EventsScreen} />
-      <Tab.Screen name="Packages" component={PackagesScreen} />
-      <Tab.Screen name="Profile">
+      <Tab.Screen name="Events" component={EventNavigator} />
+      <Tab.Screen options={{ headerShown: true}} name="Packages" component={PackagesScreen} />
+      <Tab.Screen options={{ headerShown: true}} name="Profile">
         {() => <ProfileScreen onLogout={onLogout} />}
       </Tab.Screen>
     </Tab.Navigator>
