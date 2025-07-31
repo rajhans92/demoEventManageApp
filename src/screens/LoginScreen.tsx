@@ -1,16 +1,9 @@
 import React from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert
-} from "react-native";
+import { View, StyleSheet } from "react-native";
+import { Button, Text, TextInput, useTheme, HelperText, Divider } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-// import { loginWithGoogle } from "../services/auth"; // Social login
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../types";
 
@@ -29,6 +22,8 @@ const schema = yup.object().shape({
 });
 
 export default function LoginScreen({ navigation, onLogin }: Props) {
+  const theme = useTheme();
+
   const {
     control,
     handleSubmit,
@@ -39,73 +34,96 @@ export default function LoginScreen({ navigation, onLogin }: Props) {
 
   const handleLogin = (data: LoginForm) => {
     console.log("Login with:", data);
-    // TODO: API call for login
-    Alert.alert("Login Successful", `Welcome ${data.email}`);
     onLogin();
   };
 
-  const handleGoogleLogin = async () => {
-    // const result = await loginWithGoogle();
-    // if (result) {
-    //   Alert.alert("Google Login Success", `Welcome ${result?.tokenAdditionalParameters?.given_name || "User"}`);
-    //   onLogin();
-    // }
+  const handleGoogleLogin = () => {
     onLogin();
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text variant="headlineMedium" style={styles.title}>
+        Login
+      </Text>
 
       {/* Email */}
       <Controller
         control={control}
         name="email"
         render={({ field: { onChange, value } }) => (
-          <TextInput
-            placeholder="Email"
-            style={styles.input}
-            value={value}
-            onChangeText={onChange}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
+          <>
+            <TextInput
+              label="Email"
+              mode="outlined"
+              value={value}
+              onChangeText={onChange}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              error={!!errors.email}
+              style={styles.input}
+              outlineColor="#4CAF50"
+              activeOutlineColor="#4CAF50"
+            />
+            {errors.email && <HelperText type="error">{errors.email.message}</HelperText>}
+          </>
         )}
       />
-      {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
 
       {/* Password */}
       <Controller
         control={control}
         name="password"
         render={({ field: { onChange, value } }) => (
-          <TextInput
-            placeholder="Password"
-            style={styles.input}
-            secureTextEntry
-            value={value}
-            onChangeText={onChange}
-          />
+          <>
+            <TextInput
+              label="Password"
+              mode="outlined"
+              secureTextEntry
+              value={value}
+              onChangeText={onChange}
+              error={!!errors.password}
+              style={styles.input}
+              outlineColor="#4CAF50"
+              activeOutlineColor="#4CAF50"
+            />
+            {errors.password && <HelperText type="error">{errors.password.message}</HelperText>}
+          </>
         )}
       />
-      {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
 
       {/* Login Button */}
-      <TouchableOpacity style={styles.loginBtn} onPress={handleSubmit(handleLogin)}>
-        <Text style={styles.loginText}>Login</Text>
-      </TouchableOpacity>
+      <Button
+        mode="contained"
+        onPress={handleSubmit(handleLogin)}
+        style={[styles.loginButton, { backgroundColor: "#4CAF50" }]}
+        contentStyle={{ paddingVertical: 8 }}
+      >
+        Login
+      </Button>
+
+      {/* Divider */}
+      <Divider style={{ marginVertical: 16 }} />
 
       {/* Google Login */}
-      <TouchableOpacity style={styles.googleBtn} onPress={handleGoogleLogin}>
-        <Text style={styles.googleText}>Login with Google</Text>
-      </TouchableOpacity>
+      <Button
+        mode="contained"
+        icon="google"
+        buttonColor="#DB4437"
+        onPress={handleGoogleLogin}
+        contentStyle={{ paddingVertical: 8 }}
+        style={{ borderRadius: 8 }}
+      >
+        Login with Google
+      </Button>
 
       {/* Signup Link */}
-      <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
-        <Text style={styles.signupText}>
-          Don't have an account? <Text style={styles.signupLink}>Sign Up</Text>
+      <Text style={styles.signupText}>
+        Don't have an account?{" "}
+        <Text style={{ color: "#4CAF50" }} onPress={() => navigation.navigate("Signup")}>
+          Sign Up
         </Text>
-      </TouchableOpacity>
+      </Text>
     </View>
   );
 }
@@ -115,55 +133,24 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: "center",
-    backgroundColor: "#F9FAFB"
+    backgroundColor: "white"
   },
   title: {
-    fontSize: 26,
-    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 20,
-    textAlign: "center"
+    fontWeight: "bold"
   },
   input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 12,
-    borderRadius: 8,
     marginBottom: 10,
     backgroundColor: "#fff"
   },
-  error: {
-    color: "red",
-    marginBottom: 8
-  },
-  loginBtn: {
-    backgroundColor: "#4CAF50",
-    padding: 14,
-    borderRadius: 8,
-    marginTop: 10
-  },
-  loginText: {
-    color: "#fff",
-    textAlign: "center",
-    fontWeight: "bold"
-  },
-  googleBtn: {
-    backgroundColor: "#DB4437",
-    padding: 14,
-    borderRadius: 8,
-    marginTop: 10
-  },
-  googleText: {
-    color: "#fff",
-    textAlign: "center",
-    fontWeight: "bold"
+  loginButton: {
+    marginTop: 10,
+    borderRadius: 8
   },
   signupText: {
     marginTop: 20,
     textAlign: "center",
     color: "#555"
-  },
-  signupLink: {
-    color: "#4CAF50",
-    fontWeight: "bold"
   }
 });

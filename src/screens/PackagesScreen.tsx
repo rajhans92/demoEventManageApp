@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { View, FlatList, Button, StyleSheet, Alert } from "react-native";
-import PackageCard from "../components/PackageCard";
+import { View, FlatList, StyleSheet, Alert } from "react-native";
+import { Card, Text, FAB, IconButton } from "react-native-paper";
 import type { Package } from "../types";
 
 export default function PackagesScreen() {
-  // Sample data
   const [packages, setPackages] = useState<Package[]>([
     {
       id: "1",
@@ -35,7 +34,6 @@ export default function PackagesScreen() {
   // Edit package
   const handleEdit = (pkg: Package) => {
     Alert.alert("Edit Package", `Edit functionality for "${pkg.name}" will go here.`);
-    // TODO: Open edit form or navigate to package edit screen
   };
 
   // Delete package
@@ -57,25 +55,80 @@ export default function PackagesScreen() {
     );
   };
 
+  const renderPackage = ({ item }: { item: Package }) => (
+    <Card style={styles.card} mode="elevated">
+      <Card.Title
+        title={item.name}
+        titleStyle={styles.cardTitle}
+        subtitle={`₹${item.price.toLocaleString()}`}
+        right={(props) => (
+          <View style={{ flexDirection: "row" }}>
+            <IconButton
+              {...props}
+              icon="pencil"
+              iconColor="#4CAF50"
+              onPress={() => handleEdit(item)}
+            />
+            <IconButton
+              {...props}
+              icon="delete"
+              iconColor="#F44336"
+              onPress={() => handleDelete(item)}
+            />
+          </View>
+        )}
+      />
+      <Card.Content>
+        <Text style={styles.description}>{item.description}</Text>
+      </Card.Content>
+    </Card>
+  );
+
   return (
     <View style={styles.container}>
-      <Button title="Create Package" onPress={handleCreate} />
       <FlatList
         data={packages}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <PackageCard
-            packageItem={item}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        )}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        renderItem={renderPackage}
+        contentContainerStyle={{ paddingBottom: 80 }}
+      />
+
+      <FAB
+        icon="plus"
+        style={styles.fab}
+        color="white"
+        label="Create Package"
+        onPress={handleCreate}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 }
+  container: { 
+    flex: 1, 
+    backgroundColor: "#F9FAFB", 
+    padding: 10 
+  },
+  card: {
+    marginBottom: 12,
+    borderRadius: 12,
+    backgroundColor: "white",
+    elevation: 3
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "bold"
+  },
+  description: {
+    fontSize: 14,
+    color: "#555",
+    marginTop: 4
+  },
+  fab: {
+    position: "absolute",
+    right: 16,
+    bottom: 16,
+    backgroundColor: "#4CAF50"
+  }
 });

@@ -18,6 +18,11 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
+
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -32,7 +37,9 @@ export default function App() {
             </Stack.Screen> */}
           </>
         ) : (
-          <Stack.Screen name="MainTabs" component={AppNavigator} />
+          <Stack.Screen name="MainTabs">
+            {(props) => <AppNavigator {...props} onLogout={handleLogout} />}
+          </Stack.Screen>
         )}
       </Stack.Navigator>
     </NavigationContainer>
